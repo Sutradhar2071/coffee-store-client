@@ -1,12 +1,37 @@
 import React from "react";
+import Swal from "sweetalert2";
 
 const AddCoffee = () => {
+  const handleAddCoffeeButton = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const newCoffee = Object.fromEntries(formData.entries());
+    console.log(newCoffee);
 
-    const handleAddCoffeeButton = e =>{
-        e.preventDefault();
-        const form = e.target;
-        console.log(form)
-    }
+    // send coffee data in the db
+
+    fetch("http://localhost:3000/coffees", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(newCoffee),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.insertedId) {
+            console.log('added successfully');
+          Swal.fire({
+            title: "Coffee added!",
+            icon: "success",
+            draggable: true,
+          });
+        //   form.reset();
+        }
+        
+      });
+  };
 
   return (
     <div className="p-24">
@@ -77,11 +102,12 @@ const AddCoffee = () => {
           </fieldset>
         </div>
         <fieldset className="fieldset my-6 bg-base-200 border-base-300 rounded-box border p-4">
-          <label className="label">Title</label>
+          <label className="label">Photo</label>
           <input
             type="text"
             className="input w-full"
-            placeholder="My awesome page"
+            placeholder="Photo URL"
+            name="photo"
           />
         </fieldset>
 
